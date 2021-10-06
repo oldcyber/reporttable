@@ -58,8 +58,8 @@ func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.
 			fmt.Println(err)
 		}
 	}
-	//else {
-	//}
+	
+	
 
 	// Область печати
 	// var areas string = firstSheet + "!$A$1:$" + c + "$" + strconv.Itoa(rows)
@@ -69,4 +69,8 @@ func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.
 	// 	RefersTo: firstSheet + "!$A$1:$" + c + "$" + strconv.Itoa(rows),
 	// 	Scope:    "Sheet1",
 	// })
+}
+
+func SetWorksheetStyle(l int) {
+
 }
