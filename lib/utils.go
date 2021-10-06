@@ -27,7 +27,7 @@ func ConvStrInt(str []string) []int {
 }
 
 func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.File) {
-	
+
 	// Определяем стили
 	styleGrey, err := f.NewStyle(`{"fill":{"type":"pattern","color":["#BFBFBF"],"pattern":1}}`)
 	if err != nil {
