@@ -29,7 +29,7 @@ func ConvStrInt(str []string) []int {
 func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.File) {
 
 	// Определяем стили
-	styleGrey, err := f.NewStyle(`{"fill":{"type":"pattern","color":["#BFBFBF"],"pattern":1}}`)
+	styleGrey, err := f.NewStyle(`{"fill":{"type":"pattern","color":[""],"pattern":1}}`)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -39,7 +39,7 @@ func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.
 	}
 
 	var firstCell string = "A" + strconv.Itoa(rows)
-	c, err := excelize.ColumnNumberToName(cols)
+	c, err := excelize.ColumnNumberToName(cols - 1)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -58,8 +58,6 @@ func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.
 			fmt.Println(err)
 		}
 	}
-	
-	
 
 	// Область печати
 	// var areas string = firstSheet + "!$A$1:$" + c + "$" + strconv.Itoa(rows)
