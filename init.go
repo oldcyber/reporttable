@@ -11,6 +11,17 @@ import (
 	"oldcyber.xyz/reporttable/lib"
 )
 
+// const PageLines int = 100
+var PageLines int
+
+// TODO: Разрывы страниц
+// TODO: Дата, подпись подчеркнуть
+// TODO:Убрать из группировки подвала отчёта
+
+func init() {
+	PageLines = 50
+}
+
 func main() {
 	// Запускаем таймер
 	fmt.Println("Starting... ")
@@ -18,7 +29,7 @@ func main() {
 
 	inpPath := flag.String("i", "", "input path")
 	outPath := flag.String("o", "", "output path")
-	const pageLines int = 100
+
 	flag.Parse()
 	// inpPath := "input.xlsx"
 	// outPath := "result.xlsx"
@@ -40,11 +51,11 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var totalRows int = len(rows)
+	var TotalRows int = len(rows)
 	var totalCols int = len(cols)
 	var realRows int = 0
 
-	fmt.Println("Строк: ", totalRows, "Колонок: ", totalCols)
+	// fmt.Println("Строк: ", TotalRows, "Колонок: ", totalCols)
 
 	// Стили
 	var (
@@ -62,20 +73,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// styleLightGreyLeftWrap, err := f.NewStyle(&excelize.Style{
-	// 	Fill:      excelize.Fill{Type: "pattern", Color: []string{"#D9D9D9"}, Pattern: 1},
-	// 	Alignment: &excelize.Alignment{Horizontal: "left", Vertical: "center", WrapText: true},
-	// 	Border:    []excelize.Border{top, left, right, bottom}})
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// styleLightGreyLeftNoWrap, err := f.NewStyle(&excelize.Style{
-	// 	Fill:      excelize.Fill{Type: "pattern", Color: []string{"#D9D9D9"}, Pattern: 1},
-	// 	Alignment: &excelize.Alignment{Horizontal: "left", Vertical: "center"},
-	// 	Border:    []excelize.Border{top, left, right, bottom}})
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+
 	//--- Простые ячейки ---
 	styleColumnCenterWrap, err := f.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center", WrapText: true},
@@ -148,9 +146,30 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
+	// Жирный и выравнивание вправо
+	styleBold, err := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{Horizontal: "left", Vertical: "center"},
+		Font:      &excelize.Font{Bold: true},
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	styleBoldRight, err := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{Horizontal: "right", Vertical: "center"},
+		Font:      &excelize.Font{Bold: true},
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	styleBoldCenter, err := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center"},
+		Font:      &excelize.Font{Bold: true, Size: 18},
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
 	// Форматируем документ
-	start1 := time.Now()
+	// start1 := time.Now()
 	// setDocumentProperties(f, firstSheet)
 	// ----------------------------------------------------------------
 
@@ -163,42 +182,9 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// err = f.RemoveCol(firstSheet, "AC")
 
 	// Скрываем колонку А, в соответствии с заданием
 	if err := f.SetColVisible(firstSheet, "A", false); err != nil {
-		fmt.Println(err)
-	}
-	// Общие настройки
-	if err := f.SetSheetPrOptions(firstSheet,
-		excelize.FitToPage(true),
-		excelize.AutoPageBreaks(false),
-		excelize.OutlineSummaryBelow(false),
-	); err != nil {
-		fmt.Println(err)
-	}
-	// Формат документа
-	if err := f.SetPageLayout(
-		firstSheet,
-		excelize.BlackAndWhite(false),
-		excelize.FirstPageNumber(1),
-		excelize.PageLayoutOrientation(excelize.OrientationLandscape),
-		excelize.PageLayoutPaperSize(8),
-		excelize.FitToHeight(10000),
-		excelize.FitToWidth(1),
-		excelize.PageLayoutScale(50),
-	); err != nil {
-		fmt.Println(err)
-	}
-	// Поля
-	if err := f.SetPageMargins(firstSheet,
-		excelize.PageMarginBottom(0.75),
-		excelize.PageMarginFooter(0.31),
-		excelize.PageMarginHeader(0.31),
-		excelize.PageMarginLeft(0.79),
-		excelize.PageMarginRight(0.39),
-		excelize.PageMarginTop(0.47),
-	); err != nil {
 		fmt.Println(err)
 	}
 
@@ -230,17 +216,6 @@ func main() {
 	}
 	// Общее оформление таблицы
 
-	// err = f.SetCellStyle(firstSheet, "B"+strconv.Itoa(intResult[0]-1), "D"+strconv.Itoa(intResult[0]-1), styleLightGreyCenterWrap)
-	// err = f.SetCellStyle(firstSheet, "F"+strconv.Itoa(intResult[0]-1), "Z"+strconv.Itoa(intResult[0]-1), styleLightGreyCenterWrap)
-	// err = f.SetCellStyle(firstSheet, "E"+strconv.Itoa(intResult[0]-1), "E"+strconv.Itoa(intResult[0]-1), styleLightGreyLeftWrap)
-	// err = f.SetCellStyle(firstSheet, "AA"+strconv.Itoa(intResult[0]-1), "AA"+strconv.Itoa(intResult[0]-1), styleLightGreyLeftNoWrap)
-
-	// err = f.SetCellStyle(firstSheet, "A"+strconv.Itoa(intResult[0]-1), c+strconv.Itoa(intResult[0]-1), styleLightGrey)
-	// err = f.SetCellStyle(firstSheet, "A"+strconv.Itoa(intResult[0]-1), c+strconv.Itoa(intResult[0]-1), styleColumnCenterWrap)
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	// Ширина колонок и выравнивание текста по столбцам
 	colWidth := []float64{15, 11, 14.5, 45.67, 21.5, 7.5, 8.83, 11.17, 11.83, 6.5, 6.5, 6.5, 6.5, 6.17, 6.17, 6.17, 6.17, 6.17, 6.17, 6.17, 6.17, 9.17, 10.83, 7.83, 10.67, 11.17, 8}
 
@@ -254,17 +229,18 @@ func main() {
 		}
 	}
 
-	duration := time.Since(start1)
-	fmt.Println("Page config: ", duration.String())
+	// duration := time.Since(start1)
+	// fmt.Println("Page config: ", duration.String())
 	// ----------------------------------------------------------------
 	// Группируем, в соответствии со значениями в колонке В
-	start2 := time.Now()
+	// start2 := time.Now()
 	// Ищем по regexp все варианты, пока не будет 0
 
 	var searchPattern string = "\\d*\\."
 	var searchPrefix string = "^"
 	var searchPostfix string = "$"
 	var groups int = 7
+	// var totalTableRows int = 0
 
 	for a := 1; a < groups; a++ {
 		result, err := f.SearchSheet(firstSheet, searchPrefix+strings.Repeat(searchPattern, a)+searchPostfix, true)
@@ -275,14 +251,6 @@ func main() {
 
 		// Конвертируем результат
 		intResult := lib.ConvStrInt(result)
-		// Красим
-		// if a <= 2 {
-		// 	for i := 0; i < len(intResult); i++ {
-
-		// 		lib.SetRowsColor(firstSheet, intResult[i], totalCols, a, f)
-		// 	}
-
-		// }
 
 		// Число строк в таблице с данными
 		if len(intResult) > 0 {
@@ -292,11 +260,13 @@ func main() {
 		}
 
 		// Расставляем страницы
-		start3 := time.Now()
+		// start3 := time.Now()
 
-		var wrongLine bool = false
+		// lib.PageBreaks(PageLines, firstSheet, f)
+
+		/* var wrongLine bool = false
 		if a == 1 {
-			for i := pageLines; i < totalRows; {
+			for i := PageLines; i < TotalRows; {
 				for _, v := range intResult {
 					if v == i {
 						wrongLine = true
@@ -317,12 +287,12 @@ func main() {
 					}
 				}
 
-				i = i + pageLines
+				i = i + PageLines
 			}
-			duration = time.Since(start3)
-			fmt.Println("Page breaks: ", duration.String())
+			// duration = time.Since(start3)
+			// fmt.Println("Page breaks: ", duration.String())
 
-		}
+		} */
 
 		// Добавляем группы
 		for b := 0; b < len(intResult); b++ {
@@ -386,7 +356,6 @@ func main() {
 		fmt.Println(err)
 	}
 
-	fmt.Println("B" + strconv.Itoa(intResult[0]-1))
 	err = f.SetCellStyle(firstSheet, "B"+strconv.Itoa(intResult[0]-1), c+strconv.Itoa(intResult[0]-1), styleLightGreyCenterWrap)
 	if err != nil {
 		fmt.Println(err)
@@ -394,7 +363,6 @@ func main() {
 	}
 
 	// Общее форматирование таблицы
-	fmt.Println("Строк в таблице: ", realRows)
 
 	for i := 0; i < realRows; i++ {
 		err = f.SetCellStyle(firstSheet, "B"+strconv.Itoa(intResult[0]), "D"+strconv.Itoa(realRows), styleColumnCenterWrap)
@@ -658,16 +626,81 @@ func main() {
 	if err := f.SetRowHeight(firstSheet, intResult[0]-3, 96+0.73); err != nil {
 		fmt.Println(err)
 	}
+	// Заголовок таблицы
+	if err = f.MergeCell(firstSheet, "E8", "R8"); err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = f.SetCellStyle(firstSheet, "E8", "R8", styleBoldCenter)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Обработка подвала
+	// Определяем зону для обработки
+	fmt.Println("Количество строк всего: ", TotalRows, "Строк в таблице: ", realRows)
+
+	//Ищем вхождения
+	boldResult, err := f.SearchSheet(firstSheet, "[*]", true)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Применяем свойства оформления - текст жирный, если в следующем столбце ничего нет и жирный и выравнивание по правому краю, если есть
+	for i := 0; i < len(boldResult); i++ {
+		// Убираем звёздочки
+		boldValue, err := f.GetCellValue(firstSheet, boldResult[i])
+		if err != nil {
+			fmt.Println(err)
+		}
+		newboldValue := strings.TrimPrefix(boldValue, "[*]")
+		f.SetCellValue(firstSheet, boldResult[i], newboldValue)
+
+		v1, v2, err := excelize.CellNameToCoordinates(boldResult[i])
+		if err != nil {
+			fmt.Println(err)
+		}
+		v1 = v1 + 1
+		nextRow, err := excelize.CoordinatesToCellName(v1, v2)
+		if err != nil {
+			fmt.Println(err)
+		}
+		cellValue, err := f.GetCellValue(firstSheet, nextRow)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		if cellValue == "" {
+
+			err = f.SetCellStyle(firstSheet, boldResult[i], boldResult[i], styleBold)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			err = f.SetCellStyle(firstSheet, boldResult[i], boldResult[i], styleBoldRight)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+
+	}
 
 	// ---
-	duration = time.Since(start2)
-	fmt.Println("Grouping: ", duration.String())
+	// duration = time.Since(start2)
+	// fmt.Println("Grouping: ", duration.String())
+
+	// Общие настройки
+	lib.MyPageProperties(firstSheet, f)
+	// Формат документа
+	lib.MyPageLayout(firstSheet, f)
+	// Поля
+	lib.MyPageMargins(firstSheet, f)
+
 	//сохраняем результат
 	if err = f.SaveAs(*outPath); err != nil {
 		println(err.Error())
 	}
 	//Печать результат выполнения
-	duration = time.Since(start)
+	duration := time.Since(start)
 	fmt.Println("Total time: ", duration.String())
 	fmt.Println(" Done! ")
 }

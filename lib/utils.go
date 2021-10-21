@@ -26,7 +26,60 @@ func ConvStrInt(str []string) []int {
 	return curIntRes
 }
 
-func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.File) {
+func MyPageProperties(firstSheet string, f *excelize.File) {
+	// Общие настройки
+	if err := f.SetSheetPrOptions(firstSheet,
+		excelize.FitToPage(false),
+		excelize.AutoPageBreaks(false),
+		excelize.OutlineSummaryBelow(false),
+	); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func MyPageLayout(firstSheet string, f *excelize.File) {
+	if err := f.SetPageLayout(
+		firstSheet,
+		excelize.BlackAndWhite(false),
+		excelize.FirstPageNumber(1),
+		excelize.PageLayoutOrientation(excelize.OrientationLandscape),
+		excelize.PageLayoutPaperSize(8),
+		// excelize.FitToHeight(10000),
+		// excelize.FitToWidth(1),
+		excelize.PageLayoutScale(60),
+	); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func MyPageMargins(firstSheet string, f *excelize.File) {
+	if err := f.SetPageMargins(firstSheet,
+		excelize.PageMarginBottom(0.75),
+		excelize.PageMarginFooter(0.31),
+		excelize.PageMarginHeader(0.31),
+		excelize.PageMarginLeft(0.79),
+		excelize.PageMarginRight(0.39),
+		excelize.PageMarginTop(0.47),
+	); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func PageBreaks(lines int, firstSheet string, f *excelize.File) {
+	rows, err := f.GetRows(firstSheet)
+	if err != nil {
+		fmt.Println(err)
+	}
+	var TotalRows int = len(rows)
+	for i := 1; i < TotalRows; {
+		if err := f.InsertPageBreak(firstSheet, "A"+strconv.Itoa(i)); err != nil {
+			fmt.Println(err)
+		}
+		i = i + lines
+	}
+}
+
+/* func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.File) {
 
 	// Определяем стили
 	styleGrey, err := f.NewStyle(`{"fill":{"type":"pattern","color":[""],"pattern":1}}`)
@@ -68,7 +121,7 @@ func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.
 	// 	Scope:    "Sheet1",
 	// })
 }
-
+*/
 func SetWorksheetStyle(l int) {
 
 }
