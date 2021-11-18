@@ -65,6 +65,7 @@ func MyPageMargins(firstSheet string, f *excelize.File) {
 	}
 }
 
+// FIXME: Не работает разбивка
 func PageBreaks(lines int, firstSheet string, f *excelize.File) {
 	rows, err := f.GetRows(firstSheet)
 	if err != nil {
