@@ -1,11 +1,14 @@
 package lib
 
 import (
+	"crypto/tls"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
 	"github.com/xuri/excelize/v2"
+	"gopkg.in/gomail.v2"
 )
 
 // TODO: Обрезать имя любого столбца
@@ -24,6 +27,32 @@ func ConvStrInt(str []string) []int {
 		curIntRes = append(curIntRes, b)
 	}
 	return curIntRes
+}
+
+// Отправка файла по почте
+func SendMail(toMail string, fileAttach string) {
+	config, err := LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config:", err)
+	}
+// TODO:скорректировать тему письма и текст сообщения
+	
+
+	d := gomail.NewDialer(config.Server, config.Port, config.Login, config.Password)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	m := gomail.NewMessage(gomail.SetCharset("UTF-8"))
+	m.SetHeader("From", config.From)
+	m.SetHeader("To", toMail)
+	m.SetHeader("Subject", "Выгрузка готова")
+	m.SetBody("text/html", "Отчёт сгенерирован и находится во вложении")
+	m.Attach(fileAttach)
+	if err := d.DialAndSend(m); err != nil {
+		// panic(err)
+		fmt.Println(err)
+	}
+
+	m.Reset()
 }
 
 func MyPageProperties(firstSheet string, f *excelize.File) {
@@ -80,49 +109,6 @@ func PageBreaks(lines int, firstSheet string, f *excelize.File) {
 	}
 }
 
-/* func SetRowsColor(firstSheet string, rows int, cols int, level int, f *excelize.File) {
-
-	// Определяем стили
-	styleGrey, err := f.NewStyle(`{"fill":{"type":"pattern","color":[""],"pattern":1}}`)
-	if err != nil {
-		fmt.Println(err)
-	}
-	styleBlue, err := f.NewStyle(`{"fill":{"type":"pattern","color":["#95B3D7"],"pattern":1}}`)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	var firstCell string = "A" + strconv.Itoa(rows)
-	c, err := excelize.ColumnNumberToName(cols - 1)
-	if err != nil {
-		fmt.Println(err)
-	}
-	var lastCell string = c + strconv.Itoa(rows)
-	if level == 1 {
-
-		//красим в серый цвет
-		err = f.SetCellStyle(firstSheet, firstCell, lastCell, styleGrey)
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else if level == 2 {
-		//красим в голубой цвет
-		err = f.SetCellStyle(firstSheet, firstCell, lastCell, styleBlue)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-
-	// Область печати
-	// var areas string = firstSheet + "!$A$1:$" + c + "$" + strconv.Itoa(rows)
-	// fmt.Println(areas)
-	// f.SetDefinedName(&excelize.DefinedName{
-	// 	Name:     "_xlnm.Print_Area",
-	// 	RefersTo: firstSheet + "!$A$1:$" + c + "$" + strconv.Itoa(rows),
-	// 	Scope:    "Sheet1",
-	// })
-}
-*/
 func SetWorksheetStyle(l int) {
 
 }

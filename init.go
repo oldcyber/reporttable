@@ -1,16 +1,13 @@
 package main
 
 import (
-	"crypto/tls"
 	"flag"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/xuri/excelize/v2"
-	"gopkg.in/gomail.v2"
 	"oldcyber.xyz/reporttable/lib"
 )
 
@@ -711,33 +708,8 @@ func main() {
 
 	// Отправляем по почте
 	if *toMail != "" {
-		sendMail(*toMail, *outPath)
+		lib.SendMail(*toMail, *outPath)
 	}
 	// Всё
 	fmt.Println(" Done! ")
-}
-
-func sendMail(toMail string, fileAttach string) {
-	config, err := lib.LoadConfig(".")
-	if err != nil {
-		log.Fatal("cannot load config:", err)
-	}
-// TODO:скорректировать тему письма и текст сообщения
-	
-
-	d := gomail.NewDialer(config.Server, config.Port, config.Login, config.Password)
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-
-	m := gomail.NewMessage(gomail.SetCharset("UTF-8"))
-	m.SetHeader("From", config.From)
-	m.SetHeader("To", toMail)
-	m.SetHeader("Subject", "Выгрузка готова")
-	m.SetBody("text/html", "Отчёт сгенерирован и находится во вложении")
-	m.Attach(fileAttach)
-	if err := d.DialAndSend(m); err != nil {
-		// panic(err)
-		fmt.Println(err)
-	}
-
-	m.Reset()
 }
