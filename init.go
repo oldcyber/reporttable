@@ -1,13 +1,16 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/xuri/excelize/v2"
+	"gopkg.in/gomail.v2"
 	"oldcyber.xyz/reporttable/lib"
 )
 
@@ -29,6 +32,8 @@ func main() {
 
 	inpPath := flag.String("i", "", "input path")
 	outPath := flag.String("o", "", "output path")
+	// --- лоя почты ---
+	toMail := flag.String("to", "", "input path (split with ';')")
 
 	flag.Parse()
 	// inpPath := "input.xlsx"
@@ -699,8 +704,45 @@ func main() {
 	if err = f.SaveAs(*outPath); err != nil {
 		println(err.Error())
 	}
+
 	//Печать результат выполнения
 	duration := time.Since(start)
 	fmt.Println("Total time: ", duration.String())
+
+	// Отправляем по почте
+	if *toMail != "" {
+		sendMail(*toMail, *outPath)
+	}
+	// Всё
 	fmt.Println(" Done! ")
+}
+
+func sendMail(toMail string, fileAttach string) {
+	config, err := lib.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config:", err)
+	}
+
+	// Если использовать шаблон письма
+	// result, err = ioutil.ReadFile()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+
+	d := gomail.NewDialer(config.Server, config.Port, config.Login, config.Password)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	m := gomail.NewMessage(gomail.SetCharset("UTF-8"))
+	m.SetHeader("From", config.From)
+	m.SetHeader("To", toMail)
+	m.SetHeader("Subject", "Выгрузка готова")
+	m.SetBody("text/html", "Отчёт сгенерирован и находится во вложении")
+	m.Attach(fileAttach)
+	if err := d.DialAndSend(m); err != nil {
+		// panic(err)
+		fmt.Println(err)
+	}
+
+	m.Reset()
 }
