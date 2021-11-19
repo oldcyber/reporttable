@@ -722,13 +722,8 @@ func sendMail(toMail string, fileAttach string) {
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
-
-	// Если использовать шаблон письма
-	// result, err = ioutil.ReadFile()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
+// TODO:скорректировать тему письма и текст сообщения
+	
 
 	d := gomail.NewDialer(config.Server, config.Port, config.Login, config.Password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
