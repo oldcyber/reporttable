@@ -35,8 +35,18 @@ func SendMail(toMail string, fileAttach string) {
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
-// TODO:скорректировать тему письма и текст сообщения
+
+	mailBody := `
+	Добрый день!
+	По Вашему запросу был сформирован файл "Номенклатура основного (вспомогательного) оборудования".
 	
+	
+	Это письмо сгенерировано автоматически. Пожалуйста, не отвечайте на него.
+	
+	С уважением,
+	команда СУБД "Оборудование".
+	
+	`
 
 	d := gomail.NewDialer(config.Server, config.Port, config.Login, config.Password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
@@ -44,8 +54,8 @@ func SendMail(toMail string, fileAttach string) {
 	m := gomail.NewMessage(gomail.SetCharset("UTF-8"))
 	m.SetHeader("From", config.From)
 	m.SetHeader("To", toMail)
-	m.SetHeader("Subject", "Выгрузка готова")
-	m.SetBody("text/html", "Отчёт сгенерирован и находится во вложении")
+	m.SetHeader("Subject", "Номенклатура оборудования")
+	m.SetBody("text/plain", mailBody)
 	m.Attach(fileAttach)
 	if err := d.DialAndSend(m); err != nil {
 		// panic(err)
