@@ -19,4 +19,7 @@ reporttable
 nomenclature
 .DS_Store
 reporttable-1
+.gitignore
+.vscode/settings.json
+.vscode/launch.json
 
