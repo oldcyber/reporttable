@@ -85,7 +85,7 @@ func MyPageLayout(firstSheet string, f *excelize.File) {
 		excelize.PageLayoutPaperSize(8),
 		// excelize.FitToHeight(10000),
 		// excelize.FitToWidth(1),
-		excelize.PageLayoutScale(60),
+		excelize.PageLayoutScale(65),
 	); err != nil {
 		fmt.Println(err)
 	}
