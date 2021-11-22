@@ -170,6 +170,13 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	styleUpperBorder, err := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center"},
+		Border:    []excelize.Border{top},
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
 	// Форматируем документ
 	// start1 := time.Now()
 	// setDocumentProperties(f, firstSheet)
@@ -686,6 +693,17 @@ func main() {
 
 	}
 
+	// Добавляем подчёркивание
+	result, err = f.SearchSheet(firstSheet, "(дата, подпись)")
+	for _, r := range result {
+		err = f.SetCellStyle(firstSheet, r, r, styleUpperBorder)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	if err != nil {
+		fmt.Println(err)
+	}
 	// ---
 	// duration = time.Since(start2)
 	// fmt.Println("Grouping: ", duration.String())
