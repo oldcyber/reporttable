@@ -704,6 +704,24 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	result, err = f.SearchSheet(firstSheet, "[_](дата, подпись)")
+	for _, r := range result {
+		curCellName, curCellNumber, _ := excelize.CellNameToCoordinates(r)
+		prevCell, _ := excelize.CoordinatesToCellName(curCellName-1, curCellNumber)
+		nextCell, _ := excelize.CoordinatesToCellName(curCellName+1, curCellNumber)
+		err = f.SetCellStyle(firstSheet, prevCell, nextCell, styleUpperBorder)
+		if err != nil {
+			fmt.Println(err)
+		}
+		newValue, _ := f.GetCellValue(firstSheet, r)
+		newValue = strings.TrimPrefix(newValue, "[_]")
+		f.SetCellValue(firstSheet, r, newValue)
+	}
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	// ---
 	// duration = time.Since(start2)
 	// fmt.Println("Grouping: ", duration.String())
