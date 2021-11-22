@@ -364,6 +364,12 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	// Закрепляем колонку на каждой странице печати
+	f.SetDefinedName(&excelize.DefinedName{
+		Name:     "_xlnm.Print_Titles",
+		RefersTo: firstSheet + "!$" + strconv.Itoa(intResult[0]-1) + ":$" + strconv.Itoa(intResult[0]-1),
+		Scope:    "Sheet1",
+	})
 
 	err = f.SetCellStyle(firstSheet, "B"+strconv.Itoa(intResult[0]-1), c+strconv.Itoa(intResult[0]-1), styleLightGreyCenterWrap)
 	if err != nil {
@@ -707,8 +713,8 @@ func main() {
 	result, err = f.SearchSheet(firstSheet, "[_](дата, подпись)")
 	for _, r := range result {
 		curCellName, curCellNumber, _ := excelize.CellNameToCoordinates(r)
-		prevCell, _ := excelize.CoordinatesToCellName(curCellName-1, curCellNumber)
-		nextCell, _ := excelize.CoordinatesToCellName(curCellName+1, curCellNumber)
+		prevCell, _ := excelize.CoordinatesToCellName(curCellName-2, curCellNumber)
+		nextCell, _ := excelize.CoordinatesToCellName(curCellName+2, curCellNumber)
 		err = f.SetCellStyle(firstSheet, prevCell, nextCell, styleUpperBorder)
 		if err != nil {
 			fmt.Println(err)

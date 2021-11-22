@@ -36,17 +36,18 @@ func SendMail(toMail string, fileAttach string) {
 		log.Fatal("cannot load config:", err)
 	}
 
-	mailBody := `
-	Добрый день!
-	По Вашему запросу был сформирован файл "Номенклатура основного (вспомогательного) оборудования".
+	mailBody :=
+		`
+Добрый день!
+По Вашему запросу был сформирован файл "Номенклатура основного (вспомогательного) оборудования".
 	
 	
-	Это письмо сгенерировано автоматически. Пожалуйста, не отвечайте на него.
+Это письмо сгенерировано автоматически. Пожалуйста, не отвечайте на него.
 	
-	С уважением,
-	команда СУБД "Оборудование".
-	
-	`
+С уважением,
+команда СУБД "Оборудование".
+
+`
 
 	d := gomail.NewDialer(config.Server, config.Port, config.Login, config.Password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
@@ -85,7 +86,7 @@ func MyPageLayout(firstSheet string, f *excelize.File) {
 		excelize.PageLayoutPaperSize(8),
 		// excelize.FitToHeight(10000),
 		// excelize.FitToWidth(1),
-		excelize.PageLayoutScale(65),
+		excelize.PageLayoutScale(68),
 	); err != nil {
 		fmt.Println(err)
 	}
